@@ -29,21 +29,30 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
+                echo "Building Docker image..."
                 script {
-                    // Use the Jenkins Docker Pipeline step for building
-                    def dockerImage = docker.build("reverent/demo-se:latest", ".")
+                    // FIX: Use the Jenkins Docker Pipeline step for robust building in WSL
+                    // Use a generic image name/tag for the build reference
+                    def dockerImage = docker.build("reverent/demo-se:temp", ".")
+                    
+                    // Tag the built image with the desired names
+                    dockerImage.tag("${IMAGE_REPO}:${IMAGE_TAG}")
+                    dockerImage.tag("${IMAGE_REPO}:latest")
                     
                     // Store the image reference for the next stage
-                    env.DOCKER_IMAGE = dockerImage.toString() 
+                    env.DOCKER_IMAGE_REF = dockerImage.toString() 
                 }
             }
         }
+
         stage('Push to Docker Hub') {
             steps {
+                echo "Pushing Docker image..."
                 script {
-                    // Securely log in using stored credentials and push the image
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-creds') {
-                        docker.image(env.DOCKER_IMAGE).push() // Use the reference from the previous stage
+                    // FIX: Use secure registry wrapper and built image reference
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_ID) {
+                        docker.image(env.DOCKER_IMAGE_REF).push("${IMAGE_REPO}:${IMAGE_TAG}")
+                        docker.image(env.DOCKER_IMAGE_REF).push("${IMAGE_REPO}:latest")
                     }
                 }
             }
