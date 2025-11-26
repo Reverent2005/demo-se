@@ -1,6 +1,18 @@
 pipeline {
     agent any
 
+    environment {
+        // Define repository name and tag variables
+        IMAGE_REPO = 'reverent/demo-se'
+        IMAGE_TAG = "${BUILD_NUMBER}" // Use Jenkins' built-in BUILD_NUMBER
+        
+        // Define credential IDs (assuming these IDs are set in Jenkins Credentials Manager)
+        GITHUB_CREDS_ID = 'github-creds'
+        DOCKERHUB_CREDS_ID = 'dockerhub-creds'
+        
+        // This variable will hold the reference to the built image (set in the script block)
+        DOCKER_IMAGE_REF = '' 
+    }
     stages {
         stage('Checkout') {
             steps {
