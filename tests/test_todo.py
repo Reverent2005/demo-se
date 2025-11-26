@@ -1,10 +1,10 @@
 import unittest
-from src.todo import Todo
+from src.todo import todo
 
 class TestTodo(unittest.TestCase):
 
     def setUp(self):
-        self.todo = Todo()
+        self.todo = todo()
 
     def test_add_task(self):
         self.todo.add_task("Task 1")
