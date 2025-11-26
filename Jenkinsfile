@@ -22,8 +22,8 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // CRITICAL FIX: Activate Venv and run tests in the same command
-                    sh '. venv/bin/activate && pytest tests/'
+                    // FIX: Export the current directory to PYTHONPATH before activating venv and running tests
+                    sh 'export PYTHONPATH=.:$PYTHONPATH && . venv/bin/activate && pytest tests/'
                 }
             }
         }
