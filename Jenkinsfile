@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/reverent2005/demo-se.git'
+                git url: 'https://github.com/reverent2005/demo-se.git', branch: 'main'
             }
         }
         stage('Build') {
