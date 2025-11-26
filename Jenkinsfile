@@ -44,12 +44,12 @@ pipeline {
                 echo "Building Docker image..."
                 script {
                     // FIX: Use the Jenkins Docker Pipeline step for robust building in WSL
-                    def dockerImage = docker.build("${IMAGE_TAG_BUILD}", ".")
+                    def dockerImage = docker.build("${IMAGE_REPO}:${IMAGE_TAG}", ".") // Note: Use the variable name from your environment block
                     
-                    // Tag the same image with :latest
-                    dockerImage.tag("${IMAGE_TAG_LATEST}")
+                    // Tag the image with the 'latest' tag
+                    dockerImage.tag("${IMAGE_REPO}:latest")
                     
-                    // Store the image reference
+                    // Store the image reference for the next stage
                     env.DOCKER_IMAGE_REF = dockerImage.toString() 
                 }
             }
@@ -59,11 +59,9 @@ pipeline {
             steps {
                 echo "Pushing Docker image..."
                 script {
-                    // FIX: Use the secure 'withRegistry' wrapper for automatic login
+                    // FIX: Use secure registry wrapper and built image reference
                     docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_ID) {
-                        // Push the image with both tags
-                        docker.image(env.DOCKER_IMAGE_REF).push("${IMAGE_TAG_BUILD}")
-                        docker.image(env.DOCKER_IMAGE_REF).push("${IMAGE_TAG_LATEST}")
+                        docker.image(env.DOCKER_IMAGE_REF).push() // Pushes all tags associated with the image reference
                     }
                 }
             }
