@@ -4,29 +4,26 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                // Ensure the correct branch is checked out
                 git url: 'https://github.com/reverent2005/demo-se.git', branch: 'main'
             }
         }
         stage('Build') {
             steps {
                 script {
+                    // Create the virtual environment
                     sh 'python3 -m venv venv'
                     
-                    // 2. Activate the virtual environment and install dependencies
-                    // Note: Use 'source venv/bin/activate' on Linux/WSL.
-                    // && is used to ensure the next command runs in the activated environment.
+                    // Activate the Venv and install dependencies in one command
                     sh '. venv/bin/activate && pip install -r requirements.txt'
-
-                    // Optional: Deactivate (though the shell exits anyway)
-                    // sh 'deactivate' 
                 }
             }
         }
         stage('Test') {
             steps {
                 script {
-                    // Run the tests
-                    sh 'pytest tests/'
+                    // CRITICAL FIX: Activate Venv and run tests in the same command
+                    sh '. venv/bin/activate && pytest tests/'
                 }
             }
         }
