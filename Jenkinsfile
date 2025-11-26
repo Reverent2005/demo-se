@@ -43,18 +43,21 @@ pipeline {
             steps {
                 echo "Building Docker image..."
                 script {
-                    // 1. Build the image (it gets the initial tag reverent/demo-se:temp)
-                    def dockerImage = docker.build("${IMAGE_REPO}:temp", ".")
+                    // 1. Build the image using a clean base name (reverent/demo-se:temp)
+                    def dockerImage = docker.build("reverent/demo-se:temp", ".")
                     
-                    // 2. Tag with :latest
-                    // FIX: Use the tag() method to apply the new full tag string
-                    dockerImage.tag("${IMAGE_REPO}:latest")
-
-                    // 3. Tag with :$BUILD_NUMBER
-                    dockerImage.tag("${IMAGE_REPO}:${IMAGE_TAG}") 
+                    // Get the image ID (the unique identifier for the built image)
+                    def imageId = dockerImage.id
                     
-                    // Store the primary image reference for the push stage
-                    env.DOCKER_IMAGE_REF = dockerImage.toString()
+                    // 2. Apply the :latest tag using the raw 'docker tag' command and the image ID
+                    //    We use 'sh' here because it guarantees the command executes correctly
+                    sh "docker tag ${imageId} ${IMAGE_REPO}:latest" 
+                    
+                    // 3. Apply the :$BUILD_NUMBER tag
+                    sh "docker tag ${imageId} ${IMAGE_REPO}:${IMAGE_TAG}" 
+                    
+                    // 4. Store the image reference for the push stage
+                    env.DOCKER_IMAGE_REF = "${IMAGE_REPO}:latest" // Use the common tag for reference
                 }
             }
         }
