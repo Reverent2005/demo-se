@@ -43,12 +43,19 @@ pipeline {
             steps {
                 echo "Building Docker image..."
                 script {
-                    // FIX: Use the dedicated Jenkins Docker Pipeline step
+                    // 1. Build the image (it gets tagged as reverent/demo-se:temp)
                     def dockerImage = docker.build("reverent/demo-se:temp", ".")
                     
-                    // Tag and store the reference (using your previous logic structure)
+                    // CRITICAL FIX: The tag must only be the final tag string
+                    // We want to tag it as reverent/demo-se:latest
+                    // The correct syntax for tagging with the image reference object is:
                     dockerImage.tag("${IMAGE_REPO}:latest")
-                    env.DOCKER_IMAGE_REF = dockerImage.toString() 
+                    
+                    // Ensure the IMAGE_TAG variable is defined and used correctly
+                    dockerImage.tag("${IMAGE_REPO}:${IMAGE_TAG}") 
+
+                    // Store the image reference for the push stage
+                    env.DOCKER_IMAGE_REF = dockerImage.toString()
                 }
             }
         }
