@@ -10,8 +10,15 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Assuming you have a requirements.txt file for dependencies
-                    sh 'pip install -r requirements.txt'
+                    sh 'python3 -m venv venv'
+                    
+                    // 2. Activate the virtual environment and install dependencies
+                    // Note: Use 'source venv/bin/activate' on Linux/WSL.
+                    // && is used to ensure the next command runs in the activated environment.
+                    sh '. venv/bin/activate && pip install -r requirements.txt'
+
+                    // Optional: Deactivate (though the shell exits anyway)
+                    // sh 'deactivate' 
                 }
             }
         }
