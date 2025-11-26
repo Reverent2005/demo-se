@@ -1,5 +1,5 @@
 import unittest
-from todo import Todo
+from src.todo import Todo
 
 class TestTodo(unittest.TestCase):
 

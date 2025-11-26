@@ -22,9 +22,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // New command: Activate Venv and use the Venv's specific python executable to run pytest
-                    // This implicitly handles the module path better.
-                    sh '. venv/bin/activate && python -m pytest tests/'
+                    sh '. venv/bin/activate && pytest tests/'
                 }
             }
         }
