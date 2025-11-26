@@ -19,7 +19,8 @@ class TestTodo(unittest.TestCase):
         self.todo.add_task("Task 1")
         self.todo.add_task("Task 2")
         tasks = self.todo.list_tasks()
-        self.assertEqual(tasks, ["Task 1", "Task 2"])
+        # Expecting the list method to return formatted strings with indices
+        self.assertEqual(tasks, ["1. Task 1", "2. Task 2"])
 
     def test_remove_nonexistent_task(self):
         self.todo.add_task("Task 1")
