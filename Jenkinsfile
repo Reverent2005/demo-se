@@ -31,15 +31,11 @@ pipeline {
             steps {
                 echo "Building Docker image..."
                 script {
-                    // FIX: Use the Jenkins Docker Pipeline step for robust building in WSL
-                    // Use a generic image name/tag for the build reference
+                    // FIX: Use the dedicated Jenkins Docker Pipeline step
                     def dockerImage = docker.build("reverent/demo-se:temp", ".")
                     
-                    // Tag the built image with the desired names
-                    dockerImage.tag("${IMAGE_REPO}:${IMAGE_TAG}")
+                    // Tag and store the reference (using your previous logic structure)
                     dockerImage.tag("${IMAGE_REPO}:latest")
-                    
-                    // Store the image reference for the next stage
                     env.DOCKER_IMAGE_REF = dockerImage.toString() 
                 }
             }
