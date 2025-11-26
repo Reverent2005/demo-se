@@ -15,9 +15,9 @@ This is a simple command-line interface (CLI) application that allows users to m
    git clone <repository-url>
    ```
 
-2. Navigate to the `todo-app` directory:
+2. Navigate to the `demo-se` directory:
    ```
-   cd todo-app
+   cd demo-se
    ```
 
 3. Install the required dependencies:
@@ -45,12 +45,12 @@ pytest test_todo.py
 
 To build the Docker image for this application, use the following command:
 ```
-docker build -t <your-dockerhub-username>/todo-app .
+docker build -t <your-dockerhub-username>/demo-se .
 ```
 
 To run the Docker container:
 ```
-docker run -it <your-dockerhub-username>/todo-app
+docker run -it <your-dockerhub-username>/demo-se
 ```
 
 ## License
