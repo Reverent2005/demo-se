@@ -22,7 +22,8 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    sh '. venv/bin/activate && pytest tests/'
+                    // FIX: Export both the current directory (.) and the src directory to PYTHONPATH
+                    sh 'export PYTHONPATH=.:src:$PYTHONPATH && . venv/bin/activate && python -m pytest tests/'
                 }
             }
         }
