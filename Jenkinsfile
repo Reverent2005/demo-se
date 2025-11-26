@@ -65,11 +65,22 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 echo "Pushing Docker image..."
-                script {
-                    // FIX: Use secure registry wrapper and built image reference
-                    docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_ID) {
-                        docker.image(env.DOCKER_IMAGE_REF).push("${IMAGE_REPO}:${IMAGE_TAG}")
-                        docker.image(env.DOCKER_IMAGE_REF).push("${IMAGE_REPO}:latest")
+                // Use withCredentials to expose the credential details securely
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds', // CRITICAL: Replace 'dockerhub-creds' with the actual ID if different
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    script {
+                        // Log in using the exposed environment variables
+                        sh "docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}"
+                        
+                        // Push both the build-numbered tag and the 'latest' tag
+                        sh "docker push ${IMAGE_REPO}:${IMAGE_TAG}" 
+                        sh "docker push ${IMAGE_REPO}:latest"
+                        
+                        // Log out after use
+                        sh "docker logout"
                     }
                 }
             }
