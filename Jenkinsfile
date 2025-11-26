@@ -22,8 +22,9 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // FIX: Export the current directory to PYTHONPATH before activating venv and running tests
-                    sh 'export PYTHONPATH=.:$PYTHONPATH && . venv/bin/activate && pytest tests/'
+                    // New command: Activate Venv and use the Venv's specific python executable to run pytest
+                    // This implicitly handles the module path better.
+                    sh '. venv/bin/activate && python -m pytest tests/'
                 }
             }
         }
