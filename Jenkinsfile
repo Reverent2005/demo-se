@@ -30,20 +30,20 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Use the official Jenkins Docker Pipeline step
+                    // Use the Jenkins Docker Pipeline step for building
                     def dockerImage = docker.build("reverent/demo-se:latest", ".")
                     
-                    // Store the image reference for the push stage
-                    env.DOCKER_IMAGE = dockerImage.toString()
+                    // Store the image reference for the next stage
+                    env.DOCKER_IMAGE = dockerImage.toString() 
                 }
             }
         }
         stage('Push to Docker Hub') {
             steps {
                 script {
-                    // Use the built image reference and securely log in
+                    // Securely log in using stored credentials and push the image
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-creds') {
-                        docker.image(env.DOCKER_IMAGE).push()
+                        docker.image(env.DOCKER_IMAGE).push() // Use the reference from the previous stage
                     }
                 }
             }
